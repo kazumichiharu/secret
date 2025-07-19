@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Question</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FFD1DC;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .letter {
+            background-color: #fff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform-style: preserve-3d;
+            transition: all 0.8s ease;
+        }
+        
+        .letter-content {
+            backface-visibility: hidden;
+        }
+        
+        .letter-back {
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .penguin {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.7;
+            animation: float 3s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .photo-reveal {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+        
+        .photo-reveal.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .question-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .question-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .btn-option {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .error-message {
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .error-message.visible {
+            opacity: 1;
+        }
+        
+        .heart {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .letter-scroll {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .letter-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .letter-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .letter-scroll::-webkit-scrollbar-thumb {
+            background: #FFB6C1;
+            border-radius: 10px;
+        }
+        
+        .letter-scroll::-webkit-scrollbar-thumb:hover {
+            background: #FF9AA2;
+        }
+        
+        /* Photo styling */
+        .photo-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .our-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        /* Landscape orientation */
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            width: 90vw;
+            max-width: 1200px;
+            height: 90vh;
+            max-height: 700px;
+        }
+        
+        .side-panel {
+            width: 45%;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .main-panel {
+            width: 55%;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Larger buttons */
+        .btn-large {
+            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
+        }
+        
+        .btn-xl {
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+        }
+        
+        /* Photo frame styling */
+        .photo-frame {
+            padding: 10px;
+            background: white;
+            border: 1px solid #FFB6C1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Heart decoration */
+        .heart-decoration {
+            position: absolute;
+            font-size: 24px;
+            animation: float 3s infinite ease-in-out;
+            z-index: 2;
+            filter: drop-shadow(0 0 2px rgba(255,255,255,0.7));
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+            }
+            
+            .side-panel, .main-panel {
+                width: 100%;
+            }
+        }
+    </style>
+    <!-- Main content in landscape orientation -->
+    <div class="main-container bg-white bg-opacity-90 rounded-xl shadow-xl overflow-hidden relative z-10">
+        <!-- Left side panel for letter -->
+        <div class="side-panel" id="letter-panel">
+            <div id="letter" class="letter w-full h-full bg-white rounded-lg p-6 relative">
+                <div class="letter-content h-full flex flex-col">
+                    <h2 class="text-3xl font-bold text-pink-600 mb-4 cursive text-center">My Dearest Baby</h2>
+                    <div class="letter-scroll space-y-4 text-gray-700 flex-grow">
+                        <p class="text-lg">Hi baby! I wrote this letter to tell you how grateful I am to have you in my life, and how much I really want to pursue you. I've been thinking about this a lot, kung paano ko ba gagawin, kaya I really want to ask you as soon as possible. Ayokong isipin mo na hindi ka worth the risk because you are. You deserve to be pursued.</p>
+                        
+                        <p class="text-lg">I know you've been waiting for me to ask, and I know you're confused too about what we really are. Ayoko na ganon, na natatahimik tayo kapag tinatanong kung ano ba tayo. Baby, I love you so much. I don't want to lose you. Gusto ko ikaw na yung kasama ko habang buhay. I want to be your last and forever. I want to grow with you. Gusto kitang samahan sa hirap at ginhawa.</p>
+                        
+                        <p class="text-lg">But we can't do that if we don't go through this stage, right? You deserve to be loved, valued, and treated like a princess, and I'll do all of that. I can't promise a lot, but what I can promise is that I'll stay no matter what.</p>
+                        
+                        <p class="text-lg">Also, sorry kung di ako masyado nakakapag-reply lately kasi ginagawa ko to HAHAHA. Ayoko ipahalata, kaya tiniis kong hindi muna masyado mag-reply HAHAHAHAHAHAHA baka kasi iniisip mo may kausap akong iba habang ka-call kita. I LOVE YOU SO MUCH!!</p>
+                    </div>
+                    <div class="text-center mt-6">
+                        <button id="continue-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 btn-large">
+                            Continue ❤️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right main panel for photo and question -->
+        <div class="main-panel">
+            <!-- Photo reveal (initially hidden) -->
+            <div id="photo-reveal" class="photo-reveal w-full bg-white rounded-lg p-6 mb-4 shadow-lg hidden">
+                <div class="relative pb-[60%] overflow-hidden rounded-lg">
+                    <!-- Photo container with embedded photo -->
+                    <div class="absolute inset-0 photo-frame">
+                        <!-- Heart decorations -->
+                        <div class="heart-decoration" style="top: 10px; left: 10px;">❤️</div>
+                        <div class="heart-decoration" style="top: 10px; right: 10px; animation-delay: 0.5s;">❤️</div>
+                        <div class="heart-decoration" style="bottom: 10px; left: 10px; animation-delay: 1s;">❤️</div>
+                        <div class="heart-decoration" style="bottom: 10px; right: 10px; animation-delay: 1.5s;">❤️</div>
+                        
+                        <!-- Replace "yourphoto.jpg" with the actual filename of your photo -->
+                        <img class="our-photo" src="yourphoto.jpg" alt="Our Special Photo">
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <button id="show-question-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-8 rounded-full shadow-md transition duration-300 ease-in-out transform hover:scale-105 btn-large">
+                        Continue to my question ❤️
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question container (initially hidden) -->
+            <div id="question-container" class="question-container w-full bg-white rounded-lg p-8 shadow-lg hidden">
+                <div class="text-center">
+                    <h2 class="text-4xl font-bold text-pink-600 mb-8 cursive">May I court you?</h2>
+                    <div class="flex justify-center gap-8 mb-8">
+                        <button id="yes-btn" class="btn-option bg-pink-500 hover:bg-pink-600 text-white font-semibold py-4 px-10 rounded-full shadow-md text-xl">
+                            Yes ❤️
+                        </button>
+                        <button id="no-btn" class="btn-option bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-4 px-10 rounded-full shadow-md text-xl">
+                            No
+                        </button>
+                    </div>
+                    <div id="error-message" class="error-message text-red-500 font-medium text-xl">
+                        Error: Please select "Yes" ❤️
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success message (initially hidden) -->
+            <div id="success-message" class="w-full bg-white rounded-lg p-8 shadow-lg hidden">
+                <div class="text-center">
+                    <div class="text-6xl mb-6">❤️</div>
+                    <h2 class="text-4xl font-bold text-pink-600 mb-6 cursive">Thank you!</h2>
+                    <p class="text-xl text-gray-700 mb-4">YAYY THANK YOU BABYY YISSS, THANK YOU FOR GIVING ME A CHANCE TO PROVE MY SELF TO U🥹</p>
+                    <div class="mt-6 flex justify-center">
+                        <div class="heart text-7xl animate-bounce">💕</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const letterPanel = document.getElementById('letter-panel');
+            const continueBtn = document.getElementById('continue-btn');
+            const photoReveal = document.getElementById('photo-reveal');
+            const showQuestionBtn = document.getElementById('show-question-btn');
+            const questionContainer = document.getElementById('question-container');
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            
+            // Continue to photo
+            continueBtn.addEventListener('click', function() {
+                photoReveal.classList.remove('hidden');
+                photoReveal.classList.add('visible');
+            });
+            
+            // Show question
+            showQuestionBtn.addEventListener('click', function() {
+                photoReveal.classList.remove('visible');
+                setTimeout(() => {
+                    photoReveal.classList.add('hidden');
+                    questionContainer.classList.remove('hidden');
+                    setTimeout(() => {
+                        questionContainer.classList.add('visible');
+                    }, 100);
+                }, 300);
+            });
+            
+            // Yes button
+            yesBtn.addEventListener('click', function() {
+                // Hide question container
+                questionContainer.classList.remove('visible');
+                setTimeout(() => {
+                    questionContainer.classList.add('hidden');
+                    // Show success message
+                    successMessage.classList.remove('hidden');
+                }, 500);
+            });
+            
+            // No button - show error
+            noBtn.addEventListener('click', function() {
+                errorMessage.classList.add('visible');
+                noBtn.classList.add('animate-shake');
+                
+                // Shake animation
+                noBtn.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    noBtn.style.animation = '';
+                }, 500);
+                
+                // Add shake animation
+                document.head.insertAdjacentHTML('beforeend', `
+                    <style>
+                        @keyframes shake {
+                            0%, 100% { transform: translateX(0); }
+                            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                            20%, 40%, 60%, 80% { transform: translateX(5px); }
+                        }
+                    </style>
+                `);
+            });
+        });
+    </script>  
+</body>
+</html>
